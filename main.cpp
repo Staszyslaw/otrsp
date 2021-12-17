@@ -16,7 +16,7 @@ miniconf::Config readConfig(int argc, char *argv[]) {
     conf.description("OTRSP config v1");
 
     conf.option("serial.port").shortflag("s")
-            .defaultValue("/dev/ttyUSB0").required(true)
+            .defaultValue("ttyUSB0").required(true)
             .description("Serial port connected to OTRSP device");
 
     conf.option("serial.baudrate").shortflag("b").defaultValue("9600").required(true)

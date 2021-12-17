@@ -58,7 +58,8 @@ void MainWindow::on_pushButton_clicked(const char *data) const {
 }
 
 void MainWindow::on_connect_clicked() {
-    if(this->serial->openDevice(this->config->operator[]("serial.port").getString().c_str(), this->config->operator[]("serial.baudrate").getInt()) != 1) {
+    std::string portStr = "/dev/" + this->config->operator[]("serial.port").getString();
+    if(this->serial->openDevice(portStr.c_str(), this->config->operator[]("serial.baudrate").getInt()) != 1) {
         connected = false;
         ui->status->setText("There was a problem opening the serial port");
     } else {
