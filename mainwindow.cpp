@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "lib/rs232.h"
 #include "./ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent, miniconf::Config* config)
@@ -53,13 +54,19 @@ void MainWindow::setLabelTexts() {
 
 void MainWindow::on_pushButton_clicked(const char *data) const {
     if (this->connected) {
-        this->serial->writeString((const char *) data);
+        RS232_cputs(this->portnr, (const char *) data);
     }
 }
 
 void MainWindow::on_connect_clicked() {
     std::string portStr = "/dev/" + this->config->operator[]("serial.port").getString();
-    if(this->serial->openDevice(portStr.c_str(), this->config->operator[]("serial.baudrate").getInt()) != 1) {
+    printf("Connecting to %s\n", portStr.c_str());
+    this->portnr = RS232_GetPortnr(this->config->operator[]("serial.port").getString().c_str());
+    if(this->portnr < 0) {
+	    ui->status->setText("Could not find serial port");
+	    return;
+    }
+    if(RS232_OpenComport(this->portnr, std::stoi(this->config->operator[]("serial.baudrate").getString()), "8N1", 0)) {
         connected = false;
         ui->status->setText("There was a problem opening the serial port");
     } else {
@@ -71,7 +78,7 @@ void MainWindow::on_connect_clicked() {
 }
 
 void MainWindow::on_disconnect_clicked() const {
-    serial->closeDevice();
+    RS232_CloseComport(this->portnr);
     ui->connect->setEnabled(true);
     ui->disconnect->setEnabled(false);
     ui->status->setText("Disconnected");

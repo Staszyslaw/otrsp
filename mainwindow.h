@@ -2,7 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QWidget>
-#include "lib/serialib.h"
+#include "lib/rs232.h"
 #include "lib/miniconf.h"
 
 QT_BEGIN_NAMESPACE
@@ -24,8 +24,8 @@ public:
     void on_pushButton_clicked(const char *data) const;
 
 private:
+    int portnr = -1;
     Ui::MainWindow *ui;
-    serialib *serial;
     miniconf::Config *config;
 };
 #endif // MAINWINDOW_H
