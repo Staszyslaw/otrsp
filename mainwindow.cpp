@@ -1,5 +1,6 @@
 #include <QWidget>
 #include <QMoveEvent>
+#include <QMessageBox>
 #include "mainwindow.h"
 #include "lib/rs232.h"
 #include "windowpos.h"
@@ -138,6 +139,8 @@ void MainWindow::setLabelTexts() {
 void MainWindow::on_pushButton_clicked(const char *data) const {
     if (this->connected) {
         RS232_cputs(this->portnr, (const char *) data);
+    } else {
+        QMessageBox::warning((QWidget *) this, "Error", "Not connected to a device!", QMessageBox::Ok, QMessageBox::Ok);
     }
 }
 
@@ -149,6 +152,7 @@ void MainWindow::on_connect_clicked() {
         ui->status->setText("Could not find serial port");
         return;
     }
+    // Open serial port on portnr with baudrate from config, 8 bits, no parity, 1 stop bit, no hardware flow control
     if (RS232_OpenComport(this->portnr, std::stoi(this->config->operator[]("serial.baudrate").getString()), "8N1", 0)) {
         connected = false;
         ui->status->setText("There was a problem opening the serial port");
