@@ -21,7 +21,7 @@ set(PROJECT_SOURCES
         mainwindow.h
         mainwindow.ui
         lib/miniconf.h lib/picojson.h
-        lib/rs232.h lib/rs232.cpp)
+        lib/rs232.h lib/rs232.cpp windowpos.cpp windowpos.h)
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(otrsp

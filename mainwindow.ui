@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>729</width>
+    <width>730</width>
     <height>100</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>OTRSP Controller</string>
   </property>
   <widget class="QWidget" name="horizontalLayoutWidget">
    <property name="geometry">
@@ -25,6 +25,9 @@
    <layout class="QHBoxLayout" name="horizontalLayout">
     <property name="spacing">
      <number>2</number>
+    </property>
+    <property name="sizeConstraint">
+     <enum>QLayout::SetMaximumSize</enum>
     </property>
     <item>
      <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -205,45 +208,95 @@
     </item>
    </layout>
   </widget>
-  <widget class="QLabel" name="status">
-   <property name="geometry">
-    <rect>
-     <x>500</x>
-     <y>80</y>
-     <width>231</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>...</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="connect">
+  <widget class="QFrame" name="bottomBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>80</y>
-     <width>80</width>
-     <height>20</height>
+     <width>731</width>
+     <height>21</height>
     </rect>
    </property>
-   <property name="text">
-    <string>Connect</string>
+   <property name="frameShape">
+    <enum>QFrame::StyledPanel</enum>
    </property>
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
+   </property>
+   <widget class="QCheckBox" name="expand">
+    <property name="geometry">
+     <rect>
+      <x>400</x>
+      <y>0</y>
+      <width>91</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Expand</string>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="stayTop">
+    <property name="geometry">
+     <rect>
+      <x>290</x>
+      <y>0</y>
+      <width>101</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Stay on top</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="disconnect">
+    <property name="geometry">
+     <rect>
+      <x>80</x>
+      <y>0</y>
+      <width>80</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Disconnect</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="connect">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>80</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Connect</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="status">
+    <property name="geometry">
+     <rect>
+      <x>500</x>
+      <y>0</y>
+      <width>231</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="layoutDirection">
+     <enum>Qt::LeftToRight</enum>
+    </property>
+    <property name="text">
+     <string>...</string>
+    </property>
+   </widget>
   </widget>
-  <widget class="QPushButton" name="disconnect">
-   <property name="geometry">
-    <rect>
-     <x>80</x>
-     <y>80</y>
-     <width>80</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Disconnect</string>
-   </property>
-  </widget>
+  <zorder>bottomBar</zorder>
+  <zorder>horizontalLayoutWidget</zorder>
  </widget>
  <resources/>
  <connections/>

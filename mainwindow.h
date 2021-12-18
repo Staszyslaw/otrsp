@@ -17,8 +17,10 @@ public:
     bool connected = false;
     MainWindow(QWidget *parent = nullptr, miniconf::Config* config = nullptr);
     ~MainWindow();
+    void moveEvent(QMoveEvent *event) override;
     void setButtonTexts();
     void setLabelTexts();
+    void setPosition();
     void on_connect_clicked();
     void on_disconnect_clicked() const;
     void on_pushButton_clicked(const char *data) const;
@@ -27,5 +29,6 @@ private:
     int portnr = -1;
     Ui::MainWindow *ui;
     miniconf::Config *config;
+
 };
 #endif // MAINWINDOW_H
