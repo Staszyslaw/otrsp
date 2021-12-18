@@ -17,28 +17,28 @@ MainWindow::MainWindow(QWidget *parent, miniconf::Config *config)
     connect(ui->connect, &QPushButton::clicked, this, [this]() { on_connect_clicked(); });
     connect(ui->disconnect, &QPushButton::clicked, this, [this]() { on_disconnect_clicked(); });
     connect(ui->pushButton_1, &QPushButton::clicked, this, [this]() {
-        on_pushButton_clicked((this->config->operator[]("buttons.button1.action").getString() + "\r").c_str());
+        on_pushButton_clicked((this->config->operator[]("buttons.button1.action").getString() + "\r").c_str(), ui->pushButton_1);
     });
     connect(ui->pushButton_2, &QPushButton::clicked, this, [this]() {
-        on_pushButton_clicked((this->config->operator[]("buttons.button2.action").getString() + "\r").c_str());
+        on_pushButton_clicked((this->config->operator[]("buttons.button2.action").getString() + "\r").c_str(), ui->pushButton_2);
     });
     connect(ui->pushButton_3, &QPushButton::clicked, this, [this]() {
-        on_pushButton_clicked((this->config->operator[]("buttons.button3.action").getString() + "\r").c_str());
+        on_pushButton_clicked((this->config->operator[]("buttons.button3.action").getString() + "\r").c_str(), ui->pushButton_3);
     });
     connect(ui->pushButton_4, &QPushButton::clicked, this, [this]() {
-        on_pushButton_clicked((this->config->operator[]("buttons.button4.action").getString() + "\r").c_str());
+        on_pushButton_clicked((this->config->operator[]("buttons.button4.action").getString() + "\r").c_str(), ui->pushButton_4);
     });
     connect(ui->pushButton_5, &QPushButton::clicked, this, [this]() {
-        on_pushButton_clicked((this->config->operator[]("buttons.button5.action").getString() + "\r").c_str());
+        on_pushButton_clicked((this->config->operator[]("buttons.button5.action").getString() + "\r").c_str(), ui->pushButton_5);
     });
     connect(ui->pushButton_6, &QPushButton::clicked, this, [this]() {
-        on_pushButton_clicked((this->config->operator[]("buttons.button6.action").getString() + "\r").c_str());
+        on_pushButton_clicked((this->config->operator[]("buttons.button6.action").getString() + "\r").c_str(), ui->pushButton_6);
     });
     connect(ui->pushButton_7, &QPushButton::clicked, this, [this]() {
-        on_pushButton_clicked((this->config->operator[]("buttons.button7.action").getString() + "\r").c_str());
+        on_pushButton_clicked((this->config->operator[]("buttons.button7.action").getString() + "\r").c_str(), ui->pushButton_7);
     });
     connect(ui->pushButton_8, &QPushButton::clicked, this, [this]() {
-        on_pushButton_clicked((this->config->operator[]("buttons.button8.action").getString() + "\r").c_str());
+        on_pushButton_clicked((this->config->operator[]("buttons.button8.action").getString() + "\r").c_str(), ui->pushButton_8);
     });
 
     connect(ui->stayTop, &QCheckBox::stateChanged, this, [this](int state) {
@@ -136,12 +136,25 @@ void MainWindow::setLabelTexts() {
     ui->label_8->setText(this->config->operator[]("buttons.button8.label").getString().c_str());
 }
 
-void MainWindow::on_pushButton_clicked(const char *data) const {
+void MainWindow::on_pushButton_clicked(const char *data, QPushButton *btn) const {
     if (this->connected) {
         RS232_cputs(this->portnr, (const char *) data);
     } else {
         QMessageBox::warning((QWidget *) this, "Error", "Not connected to a device!", QMessageBox::Ok, QMessageBox::Ok);
     }
+    // Restart checked of each button
+    ui->pushButton_1->setChecked(false);
+    ui->pushButton_2->setChecked(false);
+    ui->pushButton_3->setChecked(false);
+    ui->pushButton_4->setChecked(false);
+    ui->pushButton_5->setChecked(false);
+    ui->pushButton_6->setChecked(false);
+    ui->pushButton_7->setChecked(false);
+    ui->pushButton_8->setChecked(false);
+
+    // Set color of button that was clicked
+    btn->setChecked(true);
+
 }
 
 void MainWindow::on_connect_clicked() {

@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QWidget>
+#include <QPushButton>
 #include "lib/rs232.h"
 #include "lib/miniconf.h"
 
@@ -23,12 +24,11 @@ public:
     void setPosition();
     void on_connect_clicked();
     void on_disconnect_clicked() const;
-    void on_pushButton_clicked(const char *data) const;
+    void on_pushButton_clicked(const char *data, QPushButton *btn) const;
 
 private:
     int portnr = -1;
     Ui::MainWindow *ui;
     miniconf::Config *config;
-
 };
 #endif // MAINWINDOW_H

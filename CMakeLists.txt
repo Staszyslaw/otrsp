@@ -11,8 +11,10 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets LinguistTools REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets LinguistTools REQUIRED)
+SET(QT_DIR /usr/lib/cmake/Qt5/)
+
+find_package(QT NAMES Qt5 COMPONENTS Widgets REQUIRED)
+find_package(Qt5 COMPONENTS Widgets REQUIRED)
 
 
 set(PROJECT_SOURCES
@@ -21,7 +23,27 @@ set(PROJECT_SOURCES
         mainwindow.h
         mainwindow.ui
         lib/miniconf.h lib/picojson.h
-        lib/rs232.h lib/rs232.cpp windowpos.cpp windowpos.h)
+        lib/rs232.h lib/rs232.cpp
+        windowpos.cpp windowpos.h)
+
+
+# STATIC stuff (Windows)
+if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+    set(BUILD_FOR_WIN TRUE)
+endif()
+option(STATIC_BUILD "Build a static binary." ${BUILD_FOR_WIN})
+
+if (STATIC_BUILD)
+    set(CMAKE_EXE_LINKER_FLAGS "-static")
+    set(CMAKE_FIND_LIBRARY_SUFFIXES ".a" CONFIG)
+    set(BUILD_SHARED_LIBS OFF)
+endif()
+
+if (STATIC_BUILD AND ${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+    # include plugins into static build on windows
+    # (we lack support for static on other platforms right now)
+    set(QT_PLUGINS WindowsIntegration WindowsVistaStyle)
+endif()
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(otrsp
@@ -33,7 +55,6 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
 #                 ${CMAKE_CURRENT_SOURCE_DIR}/android)
 # For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
 
-    qt_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 else()
     if(ANDROID)
         add_library(otrsp SHARED
@@ -47,7 +68,6 @@ else()
         )
     endif()
 
-    qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 endif()
 
 target_link_libraries(otrsp PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
