@@ -44,7 +44,7 @@ MainWindow::MainWindow(QWidget *parent, miniconf::Config *config)
         on_pushButton_clicked((this->config->operator[]("buttons.button8.action").getString() + "\r").c_str(), ui->pushButton_8);
     });
 
-    connect(ui->close, &QPushButton::clicked, this, [this]() { on_disconnect_clicked(); exit(0); });
+    connect(ui->close, &QPushButton::clicked, this, [this]() { if(this->connected) { on_disconnect_clicked(); } exit(0); });
 
     connect(ui->stayTop, &QCheckBox::stateChanged, this, [this](int state) {
         if (state == Qt::Checked) {
@@ -141,10 +141,10 @@ void MainWindow::on_connect_clicked() {
     }
     // Open serial port on portnr with baudrate from config, 8 bits, no parity, 1 stop bit, no hardware flow control
     if (RS232_OpenComport(this->portnr, std::stoi(this->config->operator[]("serial.baudrate").getString()), "8N1", 0)) {
-        connected = false;
+        this->connected = false;
         ui->status->setText("Problem with opening serial port");
     } else {
-        connected = true;
+        this->connected = true;
         ui->connect->setEnabled(false);
         ui->disconnect->setEnabled(true);
         ui->status->setText("Connected");

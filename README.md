@@ -22,7 +22,7 @@ Configuration for this app is stored in config.json file generated on first run.
 Config is stored in the same directory as the app.
 In the same directory there will be created windowpos file, which contains saved position of the window so it can be restored on next run.
 In case of any problems you can delete any of the files and the app will be configured again.
-#####Default configuration:
+##### Default configuration:
 ```json
 {
   "autoConnect": "false", // "true" or "false" - auto connect to serial on startup
