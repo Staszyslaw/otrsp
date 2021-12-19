@@ -1,14 +1,17 @@
 #include <QWidget>
 #include <QMoveEvent>
 #include <QMessageBox>
+#include <future>
+#include <thread>
+
 #include "mainwindow.h"
-#include "lib/rs232.h"
 #include "windowpos.h"
+
+#include "lib/rs232.h"
 #include "./ui_mainwindow.h"
 
 #define WIDTH 730
-#define HEIGHT 100
-#define HIDDEN_HEIGHT 52
+#define HEIGHT 60
 
 MainWindow::MainWindow(QWidget *parent, miniconf::Config *config)
         : QWidget(parent), ui(new Ui::MainWindow) {
@@ -41,61 +44,43 @@ MainWindow::MainWindow(QWidget *parent, miniconf::Config *config)
         on_pushButton_clicked((this->config->operator[]("buttons.button8.action").getString() + "\r").c_str(), ui->pushButton_8);
     });
 
+    connect(ui->close, &QPushButton::clicked, this, [this]() { on_disconnect_clicked(); exit(0); });
+
     connect(ui->stayTop, &QCheckBox::stateChanged, this, [this](int state) {
         if (state == Qt::Checked) {
+            ui->close->setVisible(true);
             this->setWindowFlags(Qt::X11BypassWindowManagerHint | Qt::WindowStaysOnTopHint);
         } else {
+            ui->close->setVisible(false);
             this->setWindowFlags(Qt::Widget);
         }
         this->show();
     });
 
-    connect(ui->expand, &QCheckBox::stateChanged, this, [this](int state) {
-        if (state == Qt::Checked) {
-            this->setFixedSize(WIDTH, HEIGHT);
-            // move bottomBar to the bottom
-            ui->bottomBar->move(0, HEIGHT - 16);
-            ui->label_1->setVisible(true);
-            ui->label_2->setVisible(true);
-            ui->label_3->setVisible(true);
-            ui->label_4->setVisible(true);
-            ui->label_5->setVisible(true);
-            ui->label_6->setVisible(true);
-            ui->label_7->setVisible(true);
-            ui->label_8->setVisible(true);
-            ui->horizontalLayout->setContentsMargins(0, 0, 0, 0);
-            ui->horizontalLayout->setSizeConstraint(QLayout::SetMinAndMaxSize);
-        } else {
-            this->setFixedSize(WIDTH, HIDDEN_HEIGHT);
-            // move bottomBar to the bottom
-            ui->bottomBar->move(0, HIDDEN_HEIGHT - 16);
-            ui->label_1->setVisible(false);
-            ui->label_2->setVisible(false);
-            ui->label_3->setVisible(false);
-            ui->label_4->setVisible(false);
-            ui->label_5->setVisible(false);
-            ui->label_6->setVisible(false);
-            ui->label_7->setVisible(false);
-            ui->label_8->setVisible(false);
-            ui->horizontalLayout->setContentsMargins(0, 0, 0, 0);
-            ui->horizontalLayout->setSizeConstraint(QLayout::SetMaximumSize);
-        }
-        this->show();
-    });
-
-
-
-    if(this->config->operator[]("autoConnect").getString() == "true") {
-        on_connect_clicked();
-    }
-
     WindowPos::load();
 
     setButtonTexts();
-    setLabelTexts();
     setPosition();
     ui->disconnect->setEnabled(false);
     ui->status->setText("Waiting for connection...");
+
+    // comparing string to true is done to avoid bad value
+    if(this->config->operator[]("stayOnTop").getString() == "true") {
+        ui->close->setVisible(true);
+        ui->stayTop->setChecked(true);
+        this->setWindowFlags(Qt::X11BypassWindowManagerHint | Qt::WindowStaysOnTopHint);
+    } else {
+        ui->close->setVisible(false);
+        ui->stayTop->setChecked(false);
+        this->setWindowFlags(Qt::Widget);
+    }
+
+    if(this->config->operator[]("autoConnect").getString() == "true") {
+//        printf("autoConnect detected\n");
+        on_connect_clicked();
+    }
+
+
 }
 
 MainWindow::~MainWindow() {
@@ -123,17 +108,6 @@ void MainWindow::setButtonTexts() {
     ui->pushButton_6->setText(this->config->operator[]("buttons.button6.text").getString().c_str());
     ui->pushButton_7->setText(this->config->operator[]("buttons.button7.text").getString().c_str());
     ui->pushButton_8->setText(this->config->operator[]("buttons.button8.text").getString().c_str());
-}
-
-void MainWindow::setLabelTexts() {
-    ui->label_1->setText(this->config->operator[]("buttons.button1.label").getString().c_str());
-    ui->label_2->setText(this->config->operator[]("buttons.button2.label").getString().c_str());
-    ui->label_3->setText(this->config->operator[]("buttons.button3.label").getString().c_str());
-    ui->label_4->setText(this->config->operator[]("buttons.button4.label").getString().c_str());
-    ui->label_5->setText(this->config->operator[]("buttons.button5.label").getString().c_str());
-    ui->label_6->setText(this->config->operator[]("buttons.button6.label").getString().c_str());
-    ui->label_7->setText(this->config->operator[]("buttons.button7.label").getString().c_str());
-    ui->label_8->setText(this->config->operator[]("buttons.button8.label").getString().c_str());
 }
 
 void MainWindow::on_pushButton_clicked(const char *data, QPushButton *btn) const {
@@ -168,7 +142,7 @@ void MainWindow::on_connect_clicked() {
     // Open serial port on portnr with baudrate from config, 8 bits, no parity, 1 stop bit, no hardware flow control
     if (RS232_OpenComport(this->portnr, std::stoi(this->config->operator[]("serial.baudrate").getString()), "8N1", 0)) {
         connected = false;
-        ui->status->setText("There was a problem opening the serial port");
+        ui->status->setText("Problem with opening serial port");
     } else {
         connected = true;
         ui->connect->setEnabled(false);

@@ -20,7 +20,6 @@ public:
     ~MainWindow();
     void moveEvent(QMoveEvent *event) override;
     void setButtonTexts();
-    void setLabelTexts();
     void setPosition();
     void on_connect_clicked();
     void on_disconnect_clicked() const;

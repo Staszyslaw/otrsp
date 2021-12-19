@@ -10,12 +10,12 @@ set(CMAKE_AUTORCC ON)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 
-SET(QT_DIR /usr/lib/cmake/Qt5/)
+set(Qt5_DIR "/usr/lib/cmake/Qt5")
 
 find_package(QT NAMES Qt5 COMPONENTS Widgets REQUIRED)
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
-
 
 set(PROJECT_SOURCES
         main.cpp
@@ -25,25 +25,6 @@ set(PROJECT_SOURCES
         lib/miniconf.h lib/picojson.h
         lib/rs232.h lib/rs232.cpp
         windowpos.cpp windowpos.h)
-
-
-# STATIC stuff (Windows)
-if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-    set(BUILD_FOR_WIN TRUE)
-endif()
-option(STATIC_BUILD "Build a static binary." ${BUILD_FOR_WIN})
-
-if (STATIC_BUILD)
-    set(CMAKE_EXE_LINKER_FLAGS "-static")
-    set(CMAKE_FIND_LIBRARY_SUFFIXES ".a" CONFIG)
-    set(BUILD_SHARED_LIBS OFF)
-endif()
-
-if (STATIC_BUILD AND ${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-    # include plugins into static build on windows
-    # (we lack support for static on other platforms right now)
-    set(QT_PLUGINS WindowsIntegration WindowsVistaStyle)
-endif()
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(otrsp
